@@ -1,0 +1,21 @@
+1) install.packages("RMariaDB")
+
+2) library(RMariaDB)
+
+3) con_maria <- RMariaDB::dbConnect(drv = RMariaDB::MariaDB(), user = "root", host = "127.0.0.1", port = 3306, password = "", dbname = "dht11")
+
+4) dt <- RMariaDB::dbGetQuery(con_maria, "SELECT * FROM dhtdata")
+
+5) typeof(dt)
+
+6) data <-as.numeric(dt$temperature)
+
+7) mean(data)
+
+8) dt[which.max(dt[,3]),2]
+
+9) dt$time_measured
+
+10) plot(dt$time_measured,dt$temperature)
+
+11) hist(as.numeric(dt$temperature))

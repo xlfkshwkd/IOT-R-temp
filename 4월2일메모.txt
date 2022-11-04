@@ -1,0 +1,21 @@
+#include<LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+int value = 0;
+float temp =0;
+
+void setup()
+{
+ lcd.begin(16, 2); 
+}
+
+void loop()
+{
+  value=analogRead(A0);
+  temp=(value*(500.0/1023.0)-50.0);
+  lcd.setCursor(0,0);          
+  lcd.print("Apr. 2, 2021"); 
+  lcd.setCursor(0,1);           
+  lcd.print(temp); 
+  lcd.print("oC");
+}

@@ -1,0 +1,66 @@
+#include <Servo.h>
+
+Servo myservo;  // create servo object to control a servo
+// twelve servo objects can be created on most boards
+
+int pos = 0;    // variable to store the servo position
+
+void setup() {
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+}
+
+void loop() {
+  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+}
+
+-------------------------------------------------------------
+#include <Servo.h>    // 서보모터 라이브러리
+#include <IRremote.h>  // 적외선 리모컨 라이브러리
+
+int remote = A0;    // 적외선 리모컨 수광 다이오드 신호선
+int motor = 9;      // 서보모터
+
+Servo servo;          // servo 라이브러리를 사용해주기 위해 servo객체 생성
+IRrecv irrecv(remote);    // IRremote를 사용해주기 위해 irrecv객체 생성
+decode_results results;   // 디코드한 결과값
+  
+int angle = 0;    // 서보모터 각도 값
+
+void setup() {
+  servo.attach(motor);    // 모터 시작
+  irrecv.enableIRIn();    // 수광 다이오드 시작
+  Serial.begin(9600);
+  pinMode(motor,OUTPUT);  // 모터 출력
+  pinMode(remote, INPUT); // 수광 다이오드 입력
+}
+
+void loop() {
+  if (irrecv.decode(&results)){  // 적외선 리모컨의 신호를 받을 때
+    Serial.println(results.value);
+    switch (results.value) {
+      case 0xFFA857:  // +  버튼을 눌렀을 때
+        angle += 15;  // 각도값 15 추가
+        if (angle > 180)  // 각도가 180이 넘어갈 때
+          angle = 180;    // 각도값 최대를 180으로
+        servo.write(angle); // 서보모터 각도 이동
+        break;
+        
+      case 0xFFE01F:  // - 버튼을 눌렀을 때
+        angle -= 15;  // 각도값 15 감소
+        if(angle < 0) // 각도값이 0도보다 적을 때
+          angle = 0;  // 각도값 최소값을 0으로
+        servo.write(angle);  // 서보모터 각도 이동 
+        break;
+    }
+    irrecv.resume(); // 수광 다이오드 다음 값 받기
+  }
+
+}
